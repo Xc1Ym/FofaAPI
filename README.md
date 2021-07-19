@@ -1,5 +1,5 @@
 # FofaAPI
-自用FofaAPI，欢迎issue
+自用FofaAPI
 
 **目前仅完成版权信息**
 
