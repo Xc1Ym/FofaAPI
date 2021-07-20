@@ -9,8 +9,9 @@ import base64
 from prettytable import PrettyTable
 
 '''
-该fofa_API回返回头像、邮箱、fofa币、fofa版、fofa会员类型、用户名
-分别对应avatar、email、fcoin、version、vip、username
+该fofa_API利用官方API实现，根据Fofa会员等级返回查询信息
+同时还可以查询部分Fofa基础信息
+
 
 请输入API身份认证参数，email为登录邮箱，key为个人资料中的API key
 '''
@@ -20,9 +21,9 @@ key = ""
 
 class fofa:
 
-    # 获取api信息
+    # 获取基础信息
     @staticmethod
-    def Get_api(email_get_api, key_get_api):
+    def Get_me(email_get_api, key_get_api):
         try:
             api = "https://fofa.so/api/v1/info/my?email={}&key={}".format(email_get_api, key_get_api)
             r = requests.get(api)
@@ -81,7 +82,7 @@ class fofa:
 
 # main
 ff = fofa()
-request,request_json = ff.Get_api(email,key)
+request,request_json = ff.Get_me(email,key)
 
 bn = """
          ______     __               _____ _____ 
