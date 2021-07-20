@@ -5,6 +5,8 @@
 import requests
 import json
 import argparse
+import base64
+from prettytable import PrettyTable
 
 '''
 该fofa_API回返回头像、邮箱、fofa币、fofa版、fofa会员类型、用户名
@@ -23,7 +25,6 @@ class fofa:
     def Get_api(email_get_api, key_get_api):
         try:
             api = "https://fofa.so/api/v1/info/my?email={}&key={}".format(email_get_api, key_get_api)
-            # print(api)
             r = requests.get(api)
             r_json = json.loads(r.text)
             return r,r_json
@@ -37,24 +38,48 @@ class fofa:
         print("当前用户昵称：" + r['username'])
         print("当前用户头像：" + r['avatar'])
         print("当前用户邮箱：" + r['email'])
-
-    # 获取相关版本信息
-
-    @staticmethod
-    def Get_version(r):
-        print("API版本：v1.0")
         print("Fofa版本：" + r['fofacli_ver'])
 
 
-
-
-
-
-
+    # 搜索功能
+    @staticmethod
+    def Get_search(email_get_api, key_get_api, search):
+        # 请求FofaAPI
+        page = "1"
+        size = "100"
+        qbase64 = base64.b64encode(search.encode())
+        api = "https://fofa.so/api/v1/search/all?email={}&key={}&qbase64={}&page={}&size={}".format(email_get_api, key_get_api, qbase64.decode(), page, size)
+        r = requests.get(api)
+        r_json = json.loads(r.text)
+        # 判断错误信息
+        if r_json['error'] == "true":
+            if r_json['errmsg'] == "Internal Server Error!":
+                print("服务器错误")
+            elif r_json['errmsg'] == "FOFA coin is not enough!":
+                print("Fofa币不足")
+            elif r_json['errmsg'] == "Result window is too large, page must be less than or equal to...!":
+                print("结果窗口过大")
+        # 格式化输出
+        else:
+            print("\n\n")
+            print("页码：第{}页  数量：{}个".format(r_json['page'], r_json['size']))
+            print("当前显示：{}个".format(size))
+            print("查询内容：{}\n".format(r_json['query']))
+            len_size = len(r_json['results'])
+            r_list = r_json['results']
+            table = PrettyTable(['序号', '地址', 'IP', '端口'])# 绘制表格
+            # 判断数量和显示
+            intsize = int(size)
+            if intsize <= len_size:
+                for i in range(intsize):
+                    table.add_row([i+1, r_list[i][0], r_list[i][1], r_list[i][2]])
+            else:
+                for i in range(len_size):
+                    table.add_row([i+1, r_list[i][0], r_list[i][1], r_list[i][2]])
+            print(table)
 
 
 # main
-print()
 ff = fofa()
 request,request_json = ff.Get_api(email,key)
 
@@ -68,10 +93,16 @@ bn = """
     --------------------------------------------- 
     author: Xc1Ym
     github: https://github.com/Xc1Ym/FofaAPI
+    version:v1.1
     """
 print(bn)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--version", "-V", help="获取相关版本信息")
-parser.add_argument("--search", help("普通搜索"))
+parser.add_argument("--search", help="普通搜索")
+parser.add_argument("--fcion", help="查询Fofa币余额")
+parser.add_argument("--rule", help="查询Fofa语法规则")
 parser.parse_args()
+word_search = input("请输入查询内容:")
+# word_search = "qq.com"
+ff.Get_search(email, key, word_search)
