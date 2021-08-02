@@ -7,6 +7,8 @@ import json
 import argparse
 import base64
 from prettytable import PrettyTable
+import time
+
 
 '''
 该fofa_API利用官方API实现，根据Fofa会员等级返回查询信息
@@ -16,8 +18,8 @@ from prettytable import PrettyTable
 请输入API身份认证参数，email为登录邮箱，key为个人资料中的API key
 '''
 
-email = ""
-key = ""
+email = "xuedongyuming2233@gmail.com"
+key = "7c28b4b9f92a5934c2a689654d498721"
 
 class fofa:
 
@@ -71,15 +73,24 @@ class fofa:
         len_size = len(r_json['results'])
         r_list = r_json['results']
         table = PrettyTable(['序号', '地址', 'IP', '端口'])  # 绘制表格
+        path = './result/'+str(time.time())+'.csv'
+        f = open(path, 'a', encoding='utf-8')# 写入到CSV文件
         # 判断数量和显示
         intsize = int(size)
         if intsize <= len_size:
             for i in range(intsize):
                 table.add_row([i + 1, r_list[i][0], r_list[i][1], r_list[i][2]])
+                f.write(str(i+1) + ',' + r_list[i][0] + ',' + r_list[i][1] + ',' + r_list[i][2] + '\n')
         else:
             for i in range(len_size):
                 table.add_row([i + 1, r_list[i][0], r_list[i][1], r_list[i][2]])
+                f.write(str(i + 1) + ',' + r_list[i][0] + ',' + r_list[i][1] + ',' + r_list[i][2] + '\n')
         print(table)
+        f.close()
+        print("已保存到" + path)
+
+
+
 
     # 版权信息
     def Copyright(self):
