@@ -18,8 +18,8 @@ import time
 请输入API身份认证参数，email为登录邮箱，key为个人资料中的API key
 '''
 
-email = "xuedongyuming2233@gmail.com"
-key = "7c28b4b9f92a5934c2a689654d498721"
+email = ""
+key = ""
 
 class fofa:
 
